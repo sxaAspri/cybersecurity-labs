@@ -1,0 +1,1 @@
+# Lynis Linux Hardening Lab 
