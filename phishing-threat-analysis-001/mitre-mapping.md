@@ -1,154 +1,86 @@
-\# Clasificación del Incidente según MITRE ATT\&CK
+# MITRE ATT&CK Mapping
 
-
-
-Se utilizó el framework \*\*MITRE ATT\&CK\*\* para mapear las técnicas observadas durante el análisis del incidente de phishing.
-
-
+> Techniques observed during the phishing campaign mapped to the [MITRE ATT&CK Enterprise framework](https://attack.mitre.org/).
 
 ---
 
+## Technique Summary
 
-
-\## A. T1566 – Phishing (Initial Access)
-
-
-
-\*\*Descripción\*\*
-
-
-
-La técnica de phishing se utiliza para engañar a los usuarios y hacer que interactúen con contenido malicioso, generalmente a través de enlaces o páginas web fraudulentas.
-
-
-
-\*\*Evidencia observada\*\*
-
-
-
-\- Dominio engañoso utilizado para imitar un servicio legítimo.
-
-\- Redirección automática hacia una página falsa de autenticación.
-
-\- Solicitud directa de credenciales al usuario.
-
-
+| ID | Name | Tactic | Observed |
+|---|---|---|---|
+| [T1566](https://attack.mitre.org/techniques/T1566/) | Phishing | Initial Access | ✅ |
+| [T1056.003](https://attack.mitre.org/techniques/T1056/003/) | Credential Harvesting via Web Forms | Credential Access | ✅ |
+| [T1102.002](https://attack.mitre.org/techniques/T1102/002/) | Web Service — Bidirectional Communication | Command and Control | ✅ |
+| [T1041](https://attack.mitre.org/techniques/T1041/) | Exfiltration Over C2 Channel | Exfiltration | ✅ |
+| [T1583.006](https://attack.mitre.org/techniques/T1583/006/) | Acquire Infrastructure — Web Services | Resource Development | ✅ |
 
 ---
 
+## T1566 — Phishing
+**Tactic:** Initial Access
 
+Adversaries send phishing messages to trick users into interacting with malicious content — typically a link leading to a fraudulent page.
 
-\## B. T1056.003 – Credential Harvesting (Web Forms)
-
-
-
-\*\*Descripción\*\*
-
-
-
-Los atacantes capturan credenciales mediante formularios web falsos que imitan páginas de autenticación legítimas.
-
-
-
-\*\*Evidencia observada\*\*
-
-
-
-\- Funciones de captura implementadas en el archivo `excedata.js`.
-
-\- Procesamiento local de la información ingresada por el usuario.
-
-\- Envío posterior de las credenciales a un webhook controlado por el atacante.
-
-
+**Evidence observed:**
+- Deceptive domain mimicking a legitimate service
+- Automatic redirection to a fake authentication page
+- Direct credential request presented to the victim
 
 ---
 
+## T1056.003 — Credential Harvesting via Web Forms
+**Tactic:** Credential Access
 
+Adversaries use web forms on phishing pages to capture credentials entered by the victim. Processing is handled client-side to avoid exposing backend infrastructure.
 
-\## C. T1102.002 – Web Service Exfiltration
-
-
-
-\*\*Descripción\*\*
-
-
-
-Uso de servicios web legítimos para exfiltrar información robada.
-
-
-
-\*\*Evidencia observada\*\*
-
-
-
-\- Uso de un \*\*webhook de Discord\*\* como canal de exfiltración.
-
-\- Envío de información mediante solicitudes \*\*HTTP POST\*\*.
-
-
+**Evidence observed:**
+- Credential capture logic implemented in `excedata.js`
+- Form with no `action` attribute — all processing done in JavaScript
+- Credentials processed locally before exfiltration
 
 ---
 
+## T1102.002 — Web Service Abuse
+**Tactic:** Command and Control
 
+Adversaries leverage legitimate external web services to avoid building and maintaining their own infrastructure.
 
-\## D. T1041 – Exfiltration Over Web Protocol
-
-
-
-\*\*Descripción\*\*
-
-
-
-Los datos robados se envían fuera del sistema comprometido mediante protocolos web estándar.
-
-
-
-\*\*Evidencia observada\*\*
-
-
-
-\- Uso de protocolo \*\*HTTPS\*\* para transmitir la información.
-
-\- Serialización de los datos en formato \*\*JSON\*\* antes del envío.
-
-
+**Evidence observed:**
+- Discord webhook used as the exfiltration endpoint
+- Data transmitted via HTTP POST to a trusted platform
+- No attacker-controlled backend server required
 
 ---
 
+## T1041 — Exfiltration Over Web Protocol
+**Tactic:** Exfiltration
 
+Stolen data is transmitted out of the victim environment using standard web protocols, making traffic harder to distinguish from legitimate activity.
 
-\## E. T1583.006 – Acquire Infrastructure (Cloud Services)
-
-
-
-\*\*Descripción\*\*
-
-
-
-Los atacantes adquieren infraestructura en la nube para alojar contenido malicioso o infraestructura de ataque.
-
-
-
-\*\*Evidencia observada\*\*
-
-
-
-\- Hosting del contenido malicioso en \*\*Microsoft Azure\*\*.
-
-
+**Evidence observed:**
+- HTTPS used for all exfiltration traffic
+- Data serialized as JSON before transmission
+- Exfiltration blends with normal web traffic patterns
 
 ---
 
+## T1583.006 — Acquire Infrastructure (Cloud Services)
+**Tactic:** Resource Development
 
+Adversaries acquire cloud infrastructure to host malicious content, taking advantage of the reputation and availability of legitimate providers.
 
-\## Conclusión
+**Evidence observed:**
+- Phishing page hosted on Microsoft Azure Static Web Apps
+- Azure's trusted domain reputation reduces filter effectiveness
+- No self-managed server required
 
+---
 
+## Attack Tactic Chain
 
-El análisis del incidente muestra un flujo de ataque típico de \*\*phishing con recolección de credenciales\*\*, seguido de \*\*exfiltración mediante servicios web legítimos\*\*.
+```
+Resource Development → Initial Access → Credential Access → Exfiltration
+       T1583.006           T1566          T1056.003        T1041 / T1102.002
+```
 
-
-
-El uso del framework \*\*MITRE ATT\&CK\*\* permite comprender mejor las tácticas y técnicas empleadas por el atacante, facilitando su detección y mitigación dentro de entornos de seguridad defensiva.
-
+This incident represents a complete, low-infrastructure phishing chain combining social engineering, client-side credential harvesting, and exfiltration via legitimate web services — a pattern increasingly common in targeted credential theft campaigns.
