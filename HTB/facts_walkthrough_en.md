@@ -665,7 +665,7 @@ Facts was an extremely educational machine despite being classified as "Easy". I
 4. **Specialized Tools** (John the Ripper, ssh2john)
 5. **Security Concepts** (Mass Assignment, Path Traversal, Sudo Misconfiguration)
 
-This machine exemplifies how small vulnerabilities chained together lead to complete system compromise. Excellent case study for a security portfolio.
+
 
 ---
 
